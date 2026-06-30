@@ -1,1 +1,15 @@
-
+{
+  "Total_Complaints": 50000,
+  "Resolved_Complaints": 32473,
+  "Resolution_Rate_%": 64.95,
+  "Avg_Resolution_Time_Days": 8.11,
+  "High_Priority_Complaints": 12433,
+  "Avg_Citizen_Satisfaction": 2.75,
+  "Top_3_Hotspot_Zones": {
+    "South-West Zone": 6443,
+    "Central Zone": 6417,
+    "Industrial Zone": 6319
+  },
+  "Best_Performing_Department": "Police Dept",
+  "Worst_Performing_Department": "Electricity Dept"
+}
