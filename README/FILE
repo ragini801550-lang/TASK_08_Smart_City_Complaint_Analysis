@@ -1,1 +1,177 @@
+# 🏙️ Smart City Complaint Analysis
+
+**AI & ML Internship Program — Task 16**
+Domain: Data Analytics + Civic Analytics + Smart City Intelligence
+
+---
+
+## 1. Problem Statement
+
+Modern cities receive thousands of citizen complaints daily — garbage collection, water supply,
+road damage, street light failures, traffic congestion, drainage problems, and public safety
+issues. As cities grow, manually tracking and resolving these complaints becomes difficult.
+
+City leadership suspects recurring infrastructure issues and wants a data-driven system to answer:
+- Which complaint categories occur most frequently?
+- Which regions experience repeated issues?
+- Which complaints take the longest to resolve?
+- What time periods show complaint spikes?
+- Which city services require improvement?
+
+This project builds a **Smart City Complaint Analytics Dashboard** to investigate complaint
+trends, service efficiency, and urban issue patterns — supporting operational and policy
+decisions for a Smart City Command Center.
+
+---
+
+## 2. Dataset Description
+
+| | |
+|---|---|
+| **File** | `data/smart_city_complaints_50k.csv` |
+| **Rows** | 50,000 complaints |
+| **Columns** | 22 |
+| **Time range** | Jan 2023 – Dec 2024 |
+| **Zones** | 8 (Central, East, West, North, South, North-East, South-West, Industrial) |
+| **Categories** | 7 (Garbage Collection, Water Supply, Road Damage, Street Light Failure, Traffic Congestion, Drainage Problem, Public Safety) |
+| **Departments** | 7 (Sanitation, Water Supply, Public Works, Electricity, Drainage, Traffic Management, Police) |
+
+**Key columns:** `Complaint_Date`, `Resolved_Date`, `Zone`, `Category`, `Department`,
+`Priority` / `Priority_Score`, `Status`, `Resolution_Delay_Days`, `Citizen_Satisfaction_Score`,
+`Complaint_Description`, `Feedback_Comments`.
+
+**Data quality:** No duplicate rows. The only missing values are `Resolved_Date` /
+`Resolution_Delay_Days` for the 17,527 complaints still `Pending` or `In Progress` —
+this is expected missingness, not bad data (handled via an `Is_Resolved` flag, see notebook).
+
+---
+
+## 3. KPI Definitions
+
+| KPI | Definition | Value |
+|---|---|---|
+| **Total Complaints** | Count of all complaint records | 50,000 |
+| **Resolved Complaints** | Count where `Status == 'Resolved'` | 32,473 |
+| **Resolution Rate** | Resolved / Total × 100 | 64.95% |
+| **Avg Resolution Time** | Mean of `Resolution_Delay_Days` | 8.11 days |
+| **High Priority Complaints** | Count where `Priority == 'High'` | 12,433 |
+| **Citizen Satisfaction Score** | Mean of `Citizen_Satisfaction_Score` | 2.75 / 5.0 |
+| **Complaint Hotspot Zones** | Top zones by complaint count | South-West, Central, Industrial |
+| **Department Performance Score** | `0.6×Resolution_Rate% + 0.4×(Satisfaction/5×100) − 0.5×Avg_Delay` | Best: Police Dept · Lowest: Electricity Dept |
+
+---
+
+## 4. Dashboard Screenshots
+
+| Executive Overview | Complaint Trends |
+|---|---|
+| ![KPIs](images/01_executive_overview_kpis.png) | ![Trends](images/02_complaint_trends_over_time.png) |
+
+| Zone Hotspots | Category vs Resolution Time |
+|---|---|
+| ![Zones](images/03_zone_vs_complaint_count.png) | ![Category](images/04_category_vs_resolution_time.png) |
+
+| Department vs Zone Heatmap | Priority vs Delay |
+|---|---|
+| ![Heatmap](images/05_department_vs_zone_heatmap.png) | ![Priority](images/06_priority_vs_resolution_delay.png) |
+
+| Department Performance | Status Distribution |
+|---|---|
+| ![DeptPerf](images/07_department_performance_score.png) | ![Status](images/08_status_distribution.png) |
+
+| Delay vs Satisfaction Correlation | Zone vs Category Matrix |
+|---|---|
+| ![Corr](images/09_delay_vs_satisfaction_correlation.png) | ![ZoneCat](images/10_zone_vs_category_matrix.png) |
+
+An interactive version is available in `dashboard/app.py` (Streamlit).
+
+---
+
+## 5. Key Findings
+
+1. **Garbage Collection** and **Public Safety** are the most frequent complaint categories (~7,290 each); all 7 categories are within ~5% of each other.
+2. **South-West, Central, and Industrial Zones** are the top 3 complaint hotspots, but the spread across all 8 zones is narrow (~6%) — complaints are city-wide, not localized.
+3. **Priority triage works correctly**: High priority resolves in ~4.0 days vs Low priority at ~12.5 days (3x difference).
+4. **Resolution delay strongly hurts satisfaction** — correlation of **-0.71** between `Resolution_Delay_Days` and `Citizen_Satisfaction_Score`. This is the single biggest lever for improving citizen experience.
+5. **Electricity Dept** has the lowest composite performance score (56.38); **Police Dept** the highest (57.52) — though all departments are within a tight band.
+6. **35% of complaints (17,527) remain unresolved** (Pending/In Progress).
+
+Full analysis: see `reports/Business_Recommendations.md`.
+
+---
+
+## 6. Recommendations
+
+1. Reduce resolution time for Low/Medium priority complaints (currently 7.5–12.5 days) — biggest satisfaction lever.
+2. Run a backlog-clearance initiative for the 17,527 unresolved complaints.
+3. Allocate additional resources to South-West, Central, and Industrial Zones.
+4. Root-cause review of Electricity Dept's process (lowest performer).
+5. Set explicit SLA targets tied to satisfaction outcomes (e.g., resolve 80% of Low priority within 7 days).
+6. Use the `Urgency_Score` (Priority × Delay composite) to auto-escalate slipping high-priority complaints.
+
+---
+
+## 7. Future Scope
+
+- Real-time complaint streaming for live dashboard updates.
+- NLP sentiment analysis on `Feedback_Comments` to explain *why* satisfaction is low.
+- Predictive model to forecast complaint volume spikes by zone/category.
+- Officer-level performance tracking (currently department-level only).
+
+---
+
+## 8. Project Structure
+
+```
+TASK_08_Smart_City_Complaint_Analysis/
+│── data/
+│   ├── smart_city_complaints_50k.csv        # raw dataset
+│   └── smart_city_complaints_cleaned.csv    # cleaned dataset (output of Phase 1)
+│── notebook/
+│   ├── Smart_City_Complaint_Analysis.ipynb  # full analysis notebook
+│   └── analysis.py                          # same analysis as a runnable script
+│── dashboard/
+│   └── app.py                               # Streamlit interactive dashboard
+│── images/                                  # exported chart PNGs (used in this README)
+│── reports/
+│   ├── Business_Recommendations.md          # full findings + recommendations
+│   ├── kpi_summary.json                     # KPI values as JSON
+│   └── department_performance.csv           # department-level metrics table
+│── README.md
+│── requirements.txt
+```
+
+---
+
+## 9. How to Run
+
+```bash
+pip install -r requirements.txt
+
+# Option A: Run the analysis script (regenerates cleaned data + all charts)
+cd notebook
+python3 analysis.py
+
+# Option B: Open the notebook
+jupyter notebook notebook/Smart_City_Complaint_Analysis.ipynb
+
+# Option C: Launch the interactive dashboard
+cd dashboard
+streamlit run app.py
+```
+
+---
+
+## 10. Tools Used
+Python (Pandas, NumPy, Matplotlib, Seaborn, Plotly), Streamlit, Jupyter Notebook.
+
+## 11. Evaluation Criteria Mapping
+| Criteria | Weight | Where covered |
+|---|---|---|
+| Business Understanding | 20% | Section 1, Business Questions in `Business_Recommendations.md` |
+| Dashboard Design | 20% | `images/`, `dashboard/app.py` |
+| KPI Selection | 20% | Section 3 |
+| Insights | 20% | Section 5, `Business_Recommendations.md` |
+| Documentation | 10% | This README |
+| Innovation | 10% | Urgency Score, Delay-vs-Satisfaction correlation analysis (new, not in original task spec) |
 
