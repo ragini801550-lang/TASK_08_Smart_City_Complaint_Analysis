@@ -1,0 +1,8 @@
+Department,Total,Resolved,Avg_Delay,Avg_Satisfaction,Resolution_Rate_%,Performance_Score
+Police Dept,7291,4801,8.14,2.76,65.85,57.52
+Public Works Dept,7050,4613,8.04,2.75,65.43,57.24
+Water Supply Dept,6963,4533,8.11,2.74,65.1,56.92
+Sanitation Dept,7295,4730,8.21,2.74,64.84,56.72
+Traffic Management Dept,7163,4626,8.12,2.74,64.58,56.61
+Drainage Dept,7112,4588,8.08,2.74,64.51,56.59
+Electricity Dept,7126,4582,8.09,2.73,64.3,56.38
